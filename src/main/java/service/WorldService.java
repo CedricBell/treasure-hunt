@@ -11,7 +11,7 @@ public class WorldService {
         char[][] worldGrid = world.getWorldGrid().getWorldGrid();
         
         Adventurer adventurer = world.getAdventurer();
-        worldGrid[adventurer.getPosition().getCoordX()][adventurer.getPosition().getCoordY()] = adventurer.getName().charAt(0);
+        worldGrid[adventurer.getPosition().getCoordX()-1][adventurer.getPosition().getCoordY()-1] = adventurer.getName().charAt(0);
         
 
         for (int y = 0; y < worldGrid[0].length; y++) {
@@ -21,5 +21,7 @@ public class WorldService {
             System.out.println();
             }
 	}
+	
+	
 
 }

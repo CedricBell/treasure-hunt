@@ -36,14 +36,14 @@ public class App
         treasures.add(new Treasure(3, 1, 4));
 
 
-        Adventurer adventurer = new Adventurer("John", 0, 0, Orientation.EAST, null);
+        Adventurer adventurer = new Adventurer("John", 1, 1, Orientation.EAST, null);
         World world = new World(adventurer, 6, 5, mountains, treasures);
         System.out.println(String.format("World dimensions %s lines x %s columns",world.getWidth(), world.getHeight()));
 
 
         while (true) {
             System.out.println(String.format("Number of treasures collected : %s",adventurer.getTreasureNumber()));            
-            System.out.println(String.format("Adventurer position (line, column, orientation) : %s - %s - %s",adventurer.getPosition().getCoordX(), adventurer.getPosition().getCoordY(), adventurer.getOrientation()));
+            System.out.println(String.format("Adventurer position (Column, Line, orientation) : %s - %s - %s",adventurer.getPosition().getCoordX(), adventurer.getPosition().getCoordY(), adventurer.getOrientation()));
 
             worldService.showWorld(world);
             System.out.println("");

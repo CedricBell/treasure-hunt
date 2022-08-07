@@ -16,4 +16,9 @@ public class Treasure extends Position {
 	public void setTreasureNumber(int treasureNumber) {
 		this.treasureNumber = treasureNumber;
 	}
+	
+	@Override
+	public String toString() {
+        return String.format("%s Treasures at %s %s",this.treasureNumber, this.getCoordX(), this.getCoordY());
+	}
 }

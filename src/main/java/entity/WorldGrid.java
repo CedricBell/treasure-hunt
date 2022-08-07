@@ -8,6 +8,7 @@ public class WorldGrid {
 
     public WorldGrid(List<Treasure> treasures, List<Mountain> mountains, int width, int height) {
         worldGrid = new char[width][height];
+        
         for (Position mountain : mountains) {
         	worldGrid[mountain.getCoordX()-1][mountain.getCoordY()-1] = 'M';
         }

@@ -15,23 +15,25 @@ public class World {
 	
 	private WorldGrid worldGrid;
 	
-	private Adventurer adventurer;
 	
-	public World(Adventurer adventurer, List<Mountain> mountains, List<Treasure> treasures) {
+	public World(List<Mountain> mountains, List<Treasure> treasures) {
 		this.mountains = mountains;
 		this.treasures = treasures;
-		this.adventurer = adventurer;
         this.worldGrid = new WorldGrid(treasures,mountains,width,height);
 
 	}
 	
-	public World(Adventurer adventurer, int width, int height, ArrayList<Mountain> mountains, ArrayList<Treasure> treasures) {
+	public World(int width, int height, ArrayList<Mountain> mountains, ArrayList<Treasure> treasures) {
 		this.width = width;
 		this.height= height;
 		this.mountains = mountains;
 		this.treasures = treasures;
-		this.adventurer = adventurer;
         this.worldGrid = new WorldGrid(treasures,mountains,width,height);
+	}
+
+	public World() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public Integer getWidth() {
@@ -74,13 +76,8 @@ public class World {
 		this.worldGrid = worldGrid;
 	}
 
-	public Adventurer getAdventurer() {
-		return adventurer;
-	}
-
-	public void setAdventurer(Adventurer adventurer) {
-		this.adventurer = adventurer;
-	}
-	
+    public boolean isValid() {
+        return width != null && height != null;
+    }
 
 }

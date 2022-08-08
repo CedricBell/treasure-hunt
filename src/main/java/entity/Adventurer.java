@@ -69,4 +69,9 @@ public class Adventurer {
 	public void setActions(List<String> actions) {
 		this.actions = actions;
 	}
+	
+    @Override
+    public String toString() {
+        return String.format("%s %s-%s %s %s", this.name, this.position.getCoordX(), position.getCoordY(), this.orientation, this.treasureNumber);
+    }
 }

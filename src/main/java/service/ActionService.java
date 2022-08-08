@@ -1,5 +1,6 @@
 package service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import entity.Adventurer;
@@ -28,6 +29,9 @@ public class ActionService {
             	System.out.println("ILLEGAL MOVE");
             	break;
         }
+        ArrayList<Adventurer> advs = new ArrayList<>();
+        advs.add(adventurer);
+        worldService.showWorld(world, advs);
     }
 
 	private void moveForward(Adventurer adventurer, World world) {
@@ -38,7 +42,6 @@ public class ActionService {
 		if (checkMove(nextPosition, world)) {
             world.getWorldGrid().getWorldGrid()[adventurer.getPosition().getCoordX()-1][adventurer.getPosition().getCoordY()-1]= 'o';
             adventurer.setPosition(nextPosition);
-            worldService.showWorld(world);
             adventurer.setTreasureNumber(computeTreasure(adventurer.getPosition(), adventurer.getTreasureNumber(), world.getTreasures()));
         } else {
             System.out.println("ILLEGAL MOVE, OUT OF MAP OR MOUNTAIN");
@@ -47,10 +50,6 @@ public class ActionService {
 
 
 	private boolean checkMove(Position nextPosition, World world) {
-		System.out.println("NEXT POST");
-		System.out.println(nextPosition);
-		System.out.println(world.getHeight());
-		System.out.println(world.getWidth());
 		
 		return nextPosition.getCoordX() > 0 && nextPosition.getCoordX() <= world.getWidth()
                 && nextPosition.getCoordY() > 0 && nextPosition.getCoordY() <= world.getHeight()
@@ -65,13 +64,14 @@ public class ActionService {
     		return res;
     	}
 
-        final int index = treasures.indexOf(position);
+    	System.out.println(position);
+        int index = treasures.indexOf(position);
 
         if (index == -1) {
             return currentTreasureNumber;
         }
 
-        final Treasure treasure = treasures.get(index);
+        Treasure treasure = treasures.get(index);
         treasures.remove(treasure);
 
         res =  currentTreasureNumber + treasure.getTreasureNumber();
@@ -105,6 +105,8 @@ public class ActionService {
     }
 	
 	public void defineNextPositionWhenRotateRight(Adventurer adventurer) {
+		System.out.println("ROTATE RIGHT");
+
 		switch (adventurer.getOrientation()) {
     		case NORTH:
     			adventurer.setOrientation(Orientation.EAST);
@@ -122,6 +124,8 @@ public class ActionService {
     }
 	
 	public void defineNextPositionWhenRotateLeft(Adventurer adventurer) {
+		System.out.println("MOVE LEFT");
+
         switch (adventurer.getOrientation()) {
         	case NORTH:
         		adventurer.setOrientation(Orientation.WEST);

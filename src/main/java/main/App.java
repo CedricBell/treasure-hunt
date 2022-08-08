@@ -15,6 +15,7 @@ import entity.Treasure;
 import entity.World;
 import parser.AdventurerParser;
 import parser.WorldParser;
+import runner.AdventurerRunner;
 import service.ActionService;
 import service.WorldService;
 
@@ -49,8 +50,12 @@ public class App
         Adventurer john = new Adventurer("John", 1, 1, Orientation.EAST, null);
         adventurers.add(john);
         World world = new World(6, 5, mountains, treasures);
+        for (final Adventurer adventurer : adventurers) {
+            world.getPositions().put(adventurer.getName(), adventurer.getPosition());
+        }
         System.out.println(String.format("World dimensions %s lines x %s columns",world.getWidth(), world.getHeight()));
 
+        
 
         while (true) {
         	
@@ -72,13 +77,11 @@ public class App
             }
 
             actionService.movePlayer(adventurers.get(0), world, action);
-            worldService.showWorld(world, adventurers);
         }
     }
     
     public static void uploadFilesMode() {
     	System.out.println("Enter path of the file to generate the world");
-    	
     	
     	String worldPath = scanner.nextLine();
         World world;
@@ -91,10 +94,18 @@ public class App
 
 	        String adventurerPath = scanner.nextLine();
 	        List<Adventurer> adventurers = adventurerParser.parseAdventurerFile(adventurerPath);
-
-	        adventurers.forEach(adventurer -> adventurer.getActions().forEach(action -> actionService.movePlayer(adventurer, world, action)));
-
-	        // TODO : not working on the output
+	        
+	        for (final Adventurer adventurer : adventurers) {
+	            world.getPositions().put(adventurer.getName(), adventurer.getPosition());
+	        }
+	        
+	        adventurers.forEach(adventurer ->{
+	        	Thread thread = new Thread(new AdventurerRunner(adventurer,actionService, world));
+	            thread.start();
+	        }); 
+	        
+//	        TODO : Need to execute the following after the threads are done
+	        
 	        String adventurerToString = adventurers.stream().map(Adventurer::toString).collect(Collectors.joining("\n"));
 
 	        File output = new File("output.txt");
@@ -107,6 +118,7 @@ public class App
 			e.printStackTrace();
 		}        
     }
+    
     
     public static void main( String[] args )
     {
@@ -127,10 +139,7 @@ public class App
         			break;
         	default:
         		System.out.println("Please select 1 or 2");
-        }
-
-        }
-    	
-        
+            }
+        } 
     }
 }

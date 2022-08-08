@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class World {
@@ -15,11 +16,14 @@ public class World {
 	
 	private WorldGrid worldGrid;
 	
+	private HashMap<String, Position> positions;
+	
 	
 	public World(List<Mountain> mountains, List<Treasure> treasures) {
 		this.mountains = mountains;
 		this.treasures = treasures;
         this.worldGrid = new WorldGrid(treasures,mountains,width,height);
+        this.positions =  new HashMap<>();
 
 	}
 	
@@ -28,12 +32,14 @@ public class World {
 		this.height= height;
 		this.mountains = mountains;
 		this.treasures = treasures;
+		this.positions = new HashMap<>();
         this.worldGrid = new WorldGrid(treasures,mountains,width,height);
 	}
 
 	public World() {
-		super();
-		// TODO Auto-generated constructor stub
+		this.mountains = new ArrayList<>();
+		this.treasures = new ArrayList<>();
+        this.positions = new HashMap<>();
 	}
 
 	public Integer getWidth() {
@@ -79,5 +85,14 @@ public class World {
     public boolean isValid() {
         return width != null && height != null;
     }
+
+	public HashMap<String, Position> getPositions() {
+		return positions;
+	}
+
+	public void setPositions(HashMap<String, Position> positions) {
+		this.positions = positions;
+	}
+    
 
 }

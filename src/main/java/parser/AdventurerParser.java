@@ -18,7 +18,7 @@ public class AdventurerParser {
 
         List<String> adventurerLines = Files.readAllLines(Paths.get(adventurerFilePath));
         List<Adventurer> adventurers = new ArrayList<>();
-
+        
         adventurerLines.stream().map(adventurer -> adventurer.split(" ")).forEach(infoAdventurer -> {
 
             if (infoAdventurer.length != 4) {
@@ -32,12 +32,14 @@ public class AdventurerParser {
             }
 
             String name = infoAdventurer[0];
-            int initialColumn = Integer.parseInt(position[0]);
-            int initialLine = Integer.parseInt(position[1]);
+            int initCoordX = Integer.parseInt(position[0]);
+            int initCoordY = Integer.parseInt(position[1]);
             Orientation initialOrientation = Orientation.valueOf(infoAdventurer[2]);
             List<String> actions = Arrays.asList(infoAdventurer[3].split(""));
-
-            adventurers.add(new Adventurer(name, initialColumn, initialLine, initialOrientation, actions));
+            
+            
+            
+            adventurers.add(new Adventurer(name, initCoordX, initCoordY, initialOrientation, actions));
         });
 
         return adventurers;

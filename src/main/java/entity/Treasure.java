@@ -1,5 +1,6 @@
 package entity;
 
+
 public class Treasure extends Position {
 	
 	private int treasureNumber;

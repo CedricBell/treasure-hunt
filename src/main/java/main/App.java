@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import entity.Adventurer;
@@ -15,14 +18,10 @@ import entity.Treasure;
 import entity.World;
 import parser.AdventurerParser;
 import parser.WorldParser;
-import runner.AdventurerRunner;
 import service.ActionService;
 import service.WorldService;
 
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
 	
@@ -30,7 +29,7 @@ public class App
     private static final WorldService worldService = new WorldService();
     private static final WorldParser worldParser = new WorldParser();
     private static final AdventurerParser adventurerParser = new AdventurerParser();
-    
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
     private static final Scanner scanner = new Scanner(System.in);
 
 
@@ -80,47 +79,46 @@ public class App
         }
     }
     
-    public static void uploadFilesMode() {
+    public static void uploadFilesMode() throws IOException, InterruptedException {
     	System.out.println("Enter path of the file to generate the world");
     	
     	String worldPath = scanner.nextLine();
         World world;
-		try {
-			world = worldParser.parseWorldFile(worldPath);
+		world = worldParser.parseWorldFile(worldPath);
 			
-			worldService.showWorld(world, new ArrayList<>());
+		worldService.showWorld(world, new ArrayList<>());
 			
-			System.out.println("Enter path of the file for adventurers");
+		System.out.println("Enter path of the file for adventurers");
 
-	        String adventurerPath = scanner.nextLine();
-	        List<Adventurer> adventurers = adventurerParser.parseAdventurerFile(adventurerPath);
+	    String adventurerPath = scanner.nextLine();
+	    List<Adventurer> adventurers = adventurerParser.parseAdventurerFile(adventurerPath);
 	        
-	        for (final Adventurer adventurer : adventurers) {
-	            world.getPositions().put(adventurer.getName(), adventurer.getPosition());
-	        }
-	        
-	        adventurers.forEach(adventurer ->{
-	        	Thread thread = new Thread(new AdventurerRunner(adventurer,actionService, world));
-	            thread.start();
-	        }); 
-	        
-//	        TODO : Need to execute the following after the threads are done
-	        
-	        String adventurerToString = adventurers.stream().map(Adventurer::toString).collect(Collectors.joining("\n"));
+	    for (final Adventurer adventurer : adventurers) {
+	    	world.getPositions().put(adventurer.getName(), adventurer.getPosition());
+	    }
+	    
+	    adventurers.forEach(adventurer -> executorService.execute(() -> {
+		    System.out.printf("Begining  %s turn %n", adventurer.getName());
+			adventurer.getActions().forEach(action -> actionService.movePlayer(adventurer,world,action));
+			System.out.printf("Ending  %s turn %n", adventurer.getName());
+        }));
 
-	        File output = new File("output.txt");
+	    executorService.shutdown();
+	    
+        waitThreadToFinish(executorService);
+        
+        String adventurerToString = adventurers.stream().map(Adventurer::toString).collect(Collectors.joining("\n"));
 
-	        Files.write(output.toPath(), adventurerToString.getBytes());
+        File output = new File("output.txt");
 
-	        System.out.println(String.format("Output file is available here : %s", output.getAbsoluteFile()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}        
+        Files.write(output.toPath(), adventurerToString.getBytes());
+
+        System.out.println(String.format("Output file is available here : %s", output.getAbsoluteFile()));
+	         
     }
     
     
-    public static void main( String[] args )
+    public static void main( String[] args ) throws IOException, InterruptedException
     {
     	while (true) {
 
@@ -141,5 +139,9 @@ public class App
         		System.out.println("Please select 1 or 2");
             }
         } 
+    }
+    
+    private static void waitThreadToFinish(final ExecutorService executorService) throws InterruptedException {
+    	executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
     }
 }
